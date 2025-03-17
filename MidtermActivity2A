@@ -1,0 +1,157 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace LaboratoryRulesRegulations
+{
+    public partial class MainForm : Form
+    {
+        // Store the rules in an array for easy retrieval
+        private string[] labRules = new string[]
+        {
+            "1. Maintain silence, proper decorum, and discipline inside the laboratory. Mobile phones, walkmans and other personal pieces of equipment must be switched off.",
+            "2. Games are not allowed inside the lab. This includes computer-related games, card games and other games that may disturb the operation of the lab.",
+            "3. Surfing the Internet is allowed only with the permission of the instructor. Downloading and installing of software are strictly prohibited.",
+            "4. Getting access to other websites not related to the course (especially pornographic and illicit sites) is strictly prohibited.",
+            "5. Deleting computer files and changing the set-up of the computer is a major offense.",
+            "6. Observe computer time usage carefully. A fifteen-minute allowance is given for each use. Otherwise, the unit will be given to those who wish to \"sit-in\".",
+            "7. Observe proper decorum while inside the laboratory. a. Do not get inside the lab unless the instructor is present. b. All bags, knapsacks, and the likes must be deposited at the counter. c. Follow the seating arrangement of your instructor. d. At the end of class, all software programs must be closed. e. Return all chairs to their proper places after using.",
+            "8. Chewing gum, eating, drinking, smoking, and other forms of vandalism are prohibited inside the lab.",
+            "9. Anyone causing a continual disturbance will be asked to leave the lab. Acts or gestures offensive to the members of the community, including public display of physical intimacy, are not tolerated.",
+            "10. Persons exhibiting hostile or threatening behavior such as yelling, swearing, or disregarding requests made by lab personnel will be asked to leave the lab.",
+            "11. For serious offense, the lab personnel may call the Civil Security Office (CSU) for assistance.",
+            "12. Any technical problem or difficulty must be addressed to the laboratory supervisor, student assistant or instructor immediately."
+        };
+
+        // UI Controls
+        private Label titleLabel;
+        private Label promptLabel;
+        private TextBox inputTextBox;
+        private Button displayButton;
+        private Label resultLabel;
+        private Panel mainPanel;
+
+        public MainForm()
+        {
+            InitializeComponent();
+            SetupUI();
+        }
+
+        private void InitializeComponent()
+        {
+            this.Text = "Laboratory Rules and Regulations";
+            this.Size = new Size(700, 500);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.White;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+        }
+
+        private void SetupUI()
+        {
+            // Main Panel
+            mainPanel = new Panel();
+            mainPanel.Dock = DockStyle.Fill;
+            mainPanel.BackColor = Color.White;
+            this.Controls.Add(mainPanel);
+
+            // Title Label
+            titleLabel = new Label();
+            titleLabel.Text = "Laboratory Rules and Regulations";
+            titleLabel.Font = new Font("Arial", 18, FontStyle.Bold);
+            titleLabel.ForeColor = Color.DarkBlue;
+            titleLabel.AutoSize = true;
+            titleLabel.Location = new Point(150, 30);
+            mainPanel.Controls.Add(titleLabel);
+
+            // Prompt Label
+            promptLabel = new Label();
+            promptLabel.Text = "Enter a rule number (1-12):";
+            promptLabel.Font = new Font("Arial", 12);
+            promptLabel.ForeColor = Color.Black;
+            promptLabel.AutoSize = true;
+            promptLabel.Location = new Point(80, 90);
+            mainPanel.Controls.Add(promptLabel);
+
+            // Input TextBox
+            inputTextBox = new TextBox();
+            inputTextBox.Font = new Font("Arial", 12);
+            inputTextBox.Location = new Point(270, 87);
+            inputTextBox.Size = new Size(100, 30);
+            inputTextBox.BorderStyle = BorderStyle.FixedSingle;
+            // Add key press event for Enter key
+            inputTextBox.KeyPress += (sender, e) => {
+                if (e.KeyChar == (char)13) // Enter key
+                {
+                    DisplayButton_Click(sender, e);
+                    e.Handled = true;
+                }
+            };
+            mainPanel.Controls.Add(inputTextBox);
+
+            // Display Button
+            displayButton = new Button();
+            displayButton.Text = "Display Rule";
+            displayButton.Font = new Font("Arial", 10);
+            displayButton.Location = new Point(380, 87);
+            displayButton.Size = new Size(120, 30);
+            displayButton.BackColor = Color.DarkBlue;
+            displayButton.ForeColor = Color.White;
+            displayButton.FlatStyle = FlatStyle.Flat;
+            displayButton.Click += DisplayButton_Click;
+            mainPanel.Controls.Add(displayButton);
+
+            // Result Label
+            resultLabel = new Label();
+            resultLabel.Text = "Rule description will appear here.";
+            resultLabel.Font = new Font("Arial", 12);
+            resultLabel.ForeColor = Color.Black;
+            resultLabel.Location = new Point(80, 150);
+            resultLabel.Size = new Size(540, 280);
+            resultLabel.BorderStyle = BorderStyle.FixedSingle;
+            resultLabel.BackColor = Color.LightYellow;
+            resultLabel.TextAlign = ContentAlignment.TopLeft;
+            resultLabel.Padding = new Padding(10);
+            mainPanel.Controls.Add(resultLabel);
+        }
+
+        private void DisplayButton_Click(object sender, EventArgs e)
+        {
+            // Get input from text box
+            string input = inputTextBox.Text.Trim();
+
+            // Try to parse as integer
+            if (int.TryParse(input, out int ruleNumber))
+            {
+                // Check if rule number is valid (1-12)
+                if (ruleNumber >= 1 && ruleNumber <= 12)
+                {
+                    // Display the corresponding rule (arrays are 0-indexed)
+                    resultLabel.Text = labRules[ruleNumber - 1];
+                }
+                else
+                {
+                    // Invalid rule number
+                    resultLabel.Text = "Please enter a valid rule number between 1 and 12.";
+                }
+            }
+            else
+            {
+                // Input is not a number
+                resultLabel.Text = "Please enter a numeric value between 1 and 12.";
+            }
+
+            // Focus back to the input field for the next entry
+            inputTextBox.Clear();
+            inputTextBox.Focus();
+        }
+
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
+        }
+    }
+}

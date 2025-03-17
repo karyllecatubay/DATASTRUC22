@@ -1,0 +1,266 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace StudentInformationForm
+{
+    public partial class MainForm : Form
+    {
+        // Index to track current question
+        private int currentQuestionIndex = 0;
+        
+        // Arrays to store questions and user responses
+        private string[] questions = new string[]
+        {
+            "What is your ID number?",
+            "What is your course (complete)?",
+            "What is your year level?",
+            "What is your first name?",
+            "What is your middle name? (optional)",
+            "What is your last name or family name?",
+            "What is your email address?",
+            "What is your home address?",
+            "What is your father's name?",
+            "What is your mother's name?",
+            "What is your date of birth?",
+            "What is your age?",
+            "What is your phone number?",
+            "What is your parent's contact information?",
+            "What are your skills and interests?"
+        };
+        
+        private string[] responses = new string[15];
+        private string[] fieldLabels = new string[]
+        {
+            "ID Number:",
+            "Course:",
+            "Year Level:",
+            "First Name:",
+            "Middle Name:",
+            "Last Name:",
+            "Email Address:",
+            "Home Address:",
+            "Father's Name:",
+            "Mother's Name:",
+            "Date of Birth:",
+            "Age:",
+            "Phone Number:",
+            "Parent Contact:",
+            "Skills & Interests:"
+        };
+        
+        // UI Controls
+        private Label questionLabel;
+        private TextBox responseTextBox;
+        private Button nextButton;
+        private Panel questionPanel;
+        private Panel summaryPanel;
+        
+        public MainForm()
+        {
+            InitializeComponent();
+            InitializeQuestionPanel();
+            InitializeSummaryPanel();
+            
+            // Start with the first question
+            DisplayQuestion(0);
+        }
+        
+        private void InitializeComponent()
+        {
+            this.Text = "Student Information Form";
+            this.Size = new Size(500, 400);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.White;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+        }
+        
+        private void InitializeQuestionPanel()
+        {
+            questionPanel = new Panel();
+            questionPanel.Dock = DockStyle.Fill;
+            questionPanel.BackColor = Color.White;
+            this.Controls.Add(questionPanel);
+            
+            // Title
+            Label titleLabel = new Label();
+            titleLabel.Text = "Student Information Form";
+            titleLabel.Font = new Font("Arial", 16, FontStyle.Bold);
+            titleLabel.ForeColor = Color.Black;
+            titleLabel.AutoSize = true;
+            titleLabel.Location = new Point(100, 20);
+            questionPanel.Controls.Add(titleLabel);
+            
+            // Question Label
+            questionLabel = new Label();
+            questionLabel.Font = new Font("Arial", 12);
+            questionLabel.ForeColor = Color.Black;
+            questionLabel.Location = new Point(50, 80);
+            questionLabel.Size = new Size(400, 30);
+            questionPanel.Controls.Add(questionLabel);
+            
+            // Response TextBox
+            responseTextBox = new TextBox();
+            responseTextBox.Font = new Font("Arial", 12);
+            responseTextBox.Location = new Point(50, 120);
+            responseTextBox.Size = new Size(400, 30);
+            responseTextBox.BorderStyle = BorderStyle.FixedSingle;
+            questionPanel.Controls.Add(responseTextBox);
+            
+            // Next Button
+            nextButton = new Button();
+            nextButton.Text = "Next";
+            nextButton.Font = new Font("Arial", 10);
+            nextButton.Location = new Point(200, 170);
+            nextButton.Size = new Size(100, 30);
+            nextButton.BackColor = Color.Black;
+            nextButton.ForeColor = Color.White;
+            nextButton.FlatStyle = FlatStyle.Flat;
+            nextButton.Click += NextButton_Click;
+            questionPanel.Controls.Add(nextButton);
+            
+            // For multiline text fields
+            responseTextBox.KeyDown += (sender, e) => {
+                if (e.KeyCode == Keys.Enter && !e.Shift)
+                {
+                    e.SuppressKeyPress = true;
+                    NextButton_Click(sender, e);
+                }
+            };
+        }
+        
+        private void InitializeSummaryPanel()
+        {
+            summaryPanel = new Panel();
+            summaryPanel.Dock = DockStyle.Fill;
+            summaryPanel.AutoScroll = true;
+            summaryPanel.BackColor = Color.White;
+            summaryPanel.Visible = false;
+            this.Controls.Add(summaryPanel);
+            
+            // Title
+            Label titleLabel = new Label();
+            titleLabel.Text = "Student Information Summary";
+            titleLabel.Font = new Font("Arial", 16, FontStyle.Bold);
+            titleLabel.ForeColor = Color.Black;
+            titleLabel.AutoSize = true;
+            titleLabel.Location = new Point(100, 20);
+            summaryPanel.Controls.Add(titleLabel);
+            
+            // Done Button
+            Button doneButton = new Button();
+            doneButton.Text = "Done";
+            doneButton.Font = new Font("Arial", 10);
+            doneButton.Location = new Point(200, 320);
+            doneButton.Size = new Size(100, 30);
+            doneButton.BackColor = Color.Black;
+            doneButton.ForeColor = Color.White;
+            doneButton.FlatStyle = FlatStyle.Flat;
+            doneButton.Click += (sender, e) => Application.Exit();
+            summaryPanel.Controls.Add(doneButton);
+        }
+        
+        private void DisplayQuestion(int index)
+        {
+            if (index >= 0 && index < questions.Length)
+            {
+                questionLabel.Text = questions[index];
+                responseTextBox.Clear();
+                
+                // Make text boxes multiline for address and skills
+                if (index == 7 || index == 14) // Home address or Skills
+                {
+                    responseTextBox.Multiline = true;
+                    responseTextBox.Size = new Size(400, 80);
+                    nextButton.Location = new Point(200, 220);
+                }
+                else
+                {
+                    responseTextBox.Multiline = false;
+                    responseTextBox.Size = new Size(400, 30);
+                    nextButton.Location = new Point(200, 170);
+                }
+                
+                // Update button text on last question
+                if (index == questions.Length - 1)
+                {
+                    nextButton.Text = "Submit";
+                }
+                else
+                {
+                    nextButton.Text = "Next";
+                }
+                
+                // Set focus to text box
+                responseTextBox.Focus();
+            }
+        }
+        
+        private void NextButton_Click(object sender, EventArgs e)
+        {
+            // Save current response
+            responses[currentQuestionIndex] = responseTextBox.Text;
+            
+            // Move to next question or show summary
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.Length)
+            {
+                DisplayQuestion(currentQuestionIndex);
+            }
+            else
+            {
+                ShowSummary();
+            }
+        }
+        
+        private void ShowSummary()
+        {
+            questionPanel.Visible = false;
+            summaryPanel.Visible = true;
+            
+            // Clear existing controls except title and done button
+            for (int i = summaryPanel.Controls.Count - 1; i >= 0; i--)
+            {
+                if (!(summaryPanel.Controls[i] is Button) && !(summaryPanel.Controls[i].Text == "Student Information Summary"))
+                {
+                    summaryPanel.Controls.RemoveAt(i);
+                }
+            }
+            
+            // Display all responses
+            int yPos = 60;
+            for (int i = 0; i < fieldLabels.Length; i++)
+            {
+                // Label
+                Label fieldLabel = new Label();
+                fieldLabel.Text = fieldLabels[i];
+                fieldLabel.Font = new Font("Arial", 10, FontStyle.Bold);
+                fieldLabel.ForeColor = Color.Black;
+                fieldLabel.Location = new Point(50, yPos);
+                fieldLabel.AutoSize = true;
+                summaryPanel.Controls.Add(fieldLabel);
+                
+                // Value
+                Label valueLabel = new Label();
+                valueLabel.Text = responses[i];
+                valueLabel.Font = new Font("Arial", 10);
+                valueLabel.ForeColor = Color.Black;
+                valueLabel.Location = new Point(160, yPos);
+                valueLabel.Size = new Size(280, 20);
+                summaryPanel.Controls.Add(valueLabel);
+                
+                yPos += 25;
+            }
+        }
+        
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
+        }
+    }
+}
