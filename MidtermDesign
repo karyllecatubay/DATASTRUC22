@@ -1,0 +1,151 @@
+using System;
+using System.ComponentModel;
+
+namespace MidtermActivity2
+{
+    partial class Form1
+    {
+        private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Label lblInstruction;
+        private System.Windows.Forms.TextBox txtRuleNumber;
+        private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.TextBox txtRuleDisplay;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnExit;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.lblInstruction = new System.Windows.Forms.Label();
+            this.txtRuleNumber = new System.Windows.Forms.TextBox();
+            this.btnSearch = new System.Windows.Forms.Button();
+            this.txtRuleDisplay = new System.Windows.Forms.TextBox();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnExit = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Font = new System.Drawing.Font("Arial", 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblTitle.Location = new System.Drawing.Point(50, 20);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(500, 40);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "Laboratory Rules and Regulations";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblInstruction
+            // 
+            this.lblInstruction.Font = new System.Drawing.Font("Arial", 12F);
+            this.lblInstruction.Location = new System.Drawing.Point(175, 60);
+            this.lblInstruction.Name = "lblInstruction";
+            this.lblInstruction.Size = new System.Drawing.Size(200, 25);
+            this.lblInstruction.TabIndex = 1;
+            this.lblInstruction.Text = "Enter a rule number (1-12):";
+            // 
+            // txtRuleNumber
+            // 
+            this.txtRuleNumber.BackColor = System.Drawing.Color.Black;
+            this.txtRuleNumber.Font = new System.Drawing.Font("Arial", 12F);
+            this.txtRuleNumber.ForeColor = System.Drawing.Color.White;
+            this.txtRuleNumber.Location = new System.Drawing.Point(206, 88);
+            this.txtRuleNumber.MaxLength = 2;
+            this.txtRuleNumber.Name = "txtRuleNumber";
+            this.txtRuleNumber.Size = new System.Drawing.Size(146, 26);
+            this.txtRuleNumber.TabIndex = 2;
+            this.txtRuleNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.BackColor = System.Drawing.Color.Transparent;
+            this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSearch.ForeColor = System.Drawing.Color.Black;
+            this.btnSearch.Location = new System.Drawing.Point(227, 120);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(115, 23);
+            this.btnSearch.TabIndex = 3;
+            this.btnSearch.Text = "Display Rule";
+            this.btnSearch.UseVisualStyleBackColor = false;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
+            // txtRuleDisplay
+            // 
+            this.txtRuleDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtRuleDisplay.Location = new System.Drawing.Point(55, 166);
+            this.txtRuleDisplay.Multiline = true;
+            this.txtRuleDisplay.Name = "txtRuleDisplay";
+            this.txtRuleDisplay.ReadOnly = true;
+            this.txtRuleDisplay.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtRuleDisplay.Size = new System.Drawing.Size(449, 134);
+            this.txtRuleDisplay.TabIndex = 4;
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(196, 320);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(75, 23);
+            this.btnClear.TabIndex = 5;
+            this.btnClear.Text = "Clear";
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnExit
+            // 
+            this.btnExit.Location = new System.Drawing.Point(300, 320);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(75, 23);
+            this.btnExit.TabIndex = 6;
+            this.btnExit.Text = "Exit";
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // Form1
+            // 
+            this.BackColor = System.Drawing.Color.Black;
+            this.ClientSize = new System.Drawing.Size(558, 365);
+            this.Controls.Add(this.lblTitle);
+            this.Controls.Add(this.lblInstruction);
+            this.Controls.Add(this.txtRuleNumber);
+            this.Controls.Add(this.btnSearch);
+            this.Controls.Add(this.txtRuleDisplay);
+            this.Controls.Add(this.btnClear);
+            this.Controls.Add(this.btnExit);
+            this.ForeColor = System.Drawing.SystemColors.Control;
+            this.Name = "Form1";
+            this.Text = "Laboratory Rules and Regulations";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        private void BtnSearch_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void BtnClear_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+}
