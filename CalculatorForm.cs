@@ -1,266 +1,282 @@
 using System;
-using System.Data;
-using System.Drawing;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace EnhancedCalculator
 {
     public partial class CalculatorForm : Form
     {
-        private string currentInput = "0";
-        private string currentExpression = string.Empty;
-        private bool operatorClicked = false;
-        private bool equalsClicked = false;
-        private bool decimalPointAdded = false;
-        private string memoryValue = string.Empty;
+        private double currentValue = 0;
+        private double memoryValue = 0;
+        private string currentOperator = "";
+        private bool isNewCalculation = true;
+        private bool isOperatorClicked = false;
 
         public CalculatorForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
+            this.KeyDown += CalculatorForm_KeyDown;
         }
 
-        private void NumberButton_Click(object sender, EventArgs e)
+        private void CalculatorForm_KeyDown(object sender, KeyEventArgs e)
         {
-            Button button = (Button)sender;
-            
-            // Handle decimal point logic
-            if (button.Text == ".")
+            // Handle keyboard input
+            switch (e.KeyCode)
             {
-                if (!decimalPointAdded)
+                case Keys.D0:
+                case Keys.NumPad0:
+                    NumberButton_Click(this.GetButtonByText("0"), EventArgs.Empty);
+                    break;
+                case Keys.D1:
+                case Keys.NumPad1:
+                    NumberButton_Click(this.GetButtonByText("1"), EventArgs.Empty);
+                    break;
+                case Keys.D2:
+                case Keys.NumPad2:
+                    NumberButton_Click(this.GetButtonByText("2"), EventArgs.Empty);
+                    break;
+                case Keys.D3:
+                case Keys.NumPad3:
+                    NumberButton_Click(this.GetButtonByText("3"), EventArgs.Empty);
+                    break;
+                case Keys.D4:
+                case Keys.NumPad4:
+                    NumberButton_Click(this.GetButtonByText("4"), EventArgs.Empty);
+                    break;
+                case Keys.D5:
+                case Keys.NumPad5:
+                    NumberButton_Click(this.GetButtonByText("5"), EventArgs.Empty);
+                    break;
+                case Keys.D6:
+                case Keys.NumPad6:
+                    NumberButton_Click(this.GetButtonByText("6"), EventArgs.Empty);
+                    break;
+                case Keys.D7:
+                case Keys.NumPad7:
+                    NumberButton_Click(this.GetButtonByText("7"), EventArgs.Empty);
+                    break;
+                case Keys.D8:
+                case Keys.NumPad8:
+                    NumberButton_Click(this.GetButtonByText("8"), EventArgs.Empty);
+                    break;
+                case Keys.D9:
+                case Keys.NumPad9:
+                    NumberButton_Click(this.GetButtonByText("9"), EventArgs.Empty);
+                    break;
+                case Keys.Decimal:
+                case Keys.OemPeriod:
+                    NumberButton_Click(this.GetButtonByText("."), EventArgs.Empty);
+                    break;
+                case Keys.Add:
+                    OperatorButton_Click(this.GetButtonByText("+"), EventArgs.Empty);
+                    break;
+                case Keys.Subtract:
+                    OperatorButton_Click(this.GetButtonByText("-"), EventArgs.Empty);
+                    break;
+                case Keys.Multiply:
+                    OperatorButton_Click(this.GetButtonByText("×"), EventArgs.Empty);
+                    break;
+                case Keys.Divide:
+                    OperatorButton_Click(this.GetButtonByText("÷"), EventArgs.Empty);
+                    break;
+                case Keys.Enter:
+                    EqualsButton_Click(this.GetButtonByText("="), EventArgs.Empty);
+                    break;
+                case Keys.Escape:
+                    ClearButton_Click(this.GetButtonByText("C"), EventArgs.Empty);
+                    break;
+                case Keys.Back:
+                    BackspaceButton_Click(this.GetButtonByText("DEL"), EventArgs.Empty);
+                    break;
+            }
+        }
+
+        private Button GetButtonByText(string text)
+        {
+            foreach (Control control in this.Controls)
+            {
+                if (control is Button && control.Text == text)
                 {
-                    if (currentInput == "0" || operatorClicked || equalsClicked)
-                    {
-                        currentInput = "0.";
-                    }
-                    else
-                    {
-                        currentInput += ".";
-                    }
-                    decimalPointAdded = true;
+                    return (Button)control;
                 }
             }
-            else // Handle number input
+            return null;
+        }
+
+        protected void NumberButton_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            string buttonText = button.Text;
+
+            // Clear display if a new calculation is starting or an operator was just clicked
+            if (isNewCalculation || isOperatorClicked)
             {
-                if (currentInput == "0" || operatorClicked || equalsClicked)
+                displayTextBox.Text = "";
+                isNewCalculation = false;
+                isOperatorClicked = false;
+            }
+
+            // Handle decimal point
+            if (buttonText == ".")
+            {
+                if (!displayTextBox.Text.Contains("."))
                 {
-                    // If the current input is 0 and the button pressed is not 0
-                    // replace the 0 with the new digit
-                    if (currentInput == "0" && button.Text == "0")
+                    if (displayTextBox.Text == "" || displayTextBox.Text == "0")
                     {
-                        // Do nothing if trying to add more zeros at the beginning
-                        currentInput = "0";
+                        displayTextBox.Text = "0.";
                     }
                     else
                     {
-                        currentInput = button.Text;
+                        displayTextBox.Text += ".";
                     }
-                    operatorClicked = false;
-                    equalsClicked = false;
+                }
+            }
+            else // Handle digits
+            {
+                if (displayTextBox.Text == "0")
+                {
+                    displayTextBox.Text = buttonText;
                 }
                 else
                 {
-                    currentInput += button.Text;
+                    displayTextBox.Text += buttonText;
                 }
             }
-            
-            displayTextBox.Text = currentInput;
-            expressionLabel.Text = currentExpression;
         }
 
-        private void OperatorButton_Click(object sender, EventArgs e)
+        protected void OperatorButton_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             
-            // If we already have an expression, calculate it first
-            if (!string.IsNullOrEmpty(currentExpression) && !operatorClicked)
+            if (!isOperatorClicked)
             {
-                CalculateExpression();
-                displayTextBox.Text = currentInput;
+                if (currentOperator != "")
+                {
+                    EqualsButton_Click(this, EventArgs.Empty);
+                }
+
+                currentValue = Convert.ToDouble(displayTextBox.Text);
+                currentOperator = button.Text;
+                
+                expressionLabel.Text = displayTextBox.Text + " " + currentOperator;
+                isOperatorClicked = true;
             }
+            else
+            {
+                // Change operator if another one is clicked
+                currentOperator = button.Text;
+                expressionLabel.Text = expressionLabel.Text.Substring(0, expressionLabel.Text.Length - 1) + currentOperator;
+            }
+        }
+
+        protected void EqualsButton_Click(object sender, EventArgs e)
+        {
+            if (currentOperator == "")
+                return;
+
+            double secondValue = Convert.ToDouble(displayTextBox.Text);
+            double result = 0;
+
+            switch (currentOperator)
+            {
+                case "+":
+                    result = currentValue + secondValue;
+                    break;
+                case "-":
+                    result = currentValue - secondValue;
+                    break;
+                case "×":
+                    result = currentValue * secondValue;
+                    break;
+                case "÷":
+                    if (secondValue != 0)
+                    {
+                        result = currentValue / secondValue;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Cannot divide by zero", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ClearButton_Click(this, EventArgs.Empty);
+                        return;
+                    }
+                    break;
+            }
+
+            expressionLabel.Text += " " + secondValue.ToString() + " = ";
+            displayTextBox.Text = result.ToString();
+            currentValue = result;
+            currentOperator = "";
+            isNewCalculation = true;
+        }
+
+        protected void ClearButton_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
             
-            // Append current input and operator to the expression
-            if (!string.IsNullOrEmpty(currentInput) && currentInput != "Error")
+            if (button.Text == "C") // Clear all
             {
-                currentExpression += currentInput;
-                
-                // Convert × and ÷ to * and / for calculation
-                string operatorSymbol = button.Text;
-                if (operatorSymbol == "×") operatorSymbol = "*";
-                if (operatorSymbol == "÷") operatorSymbol = "/";
-                
-                currentExpression += operatorSymbol;
-                operatorClicked = true;
-                decimalPointAdded = false;
-                equalsClicked = false;
-                
-                expressionLabel.Text = currentExpression;
+                displayTextBox.Text = "0";
+                expressionLabel.Text = "";
+                currentValue = 0;
+                currentOperator = "";
+                isNewCalculation = true;
+                isOperatorClicked = false;
+            }
+            else if (button.Text == "CE") // Clear entry
+            {
+                displayTextBox.Text = "0";
             }
         }
 
-        private void EqualsButton_Click(object sender, EventArgs e)
+        protected void BackspaceButton_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(currentInput) && !operatorClicked && currentInput != "Error")
+            if (displayTextBox.Text.Length > 1)
             {
-                // Add current input to expression
-                currentExpression += currentInput;
-                expressionLabel.Text = currentExpression + "=";
-                
-                // Calculate the result
-                CalculateExpression();
-                displayTextBox.Text = currentInput;
-                
-                // Reset for next calculation
-                currentExpression = string.Empty;
-                equalsClicked = true;
-                decimalPointAdded = currentInput.Contains(".");
+                displayTextBox.Text = displayTextBox.Text.Remove(displayTextBox.Text.Length - 1);
+            }
+            else
+            {
+                displayTextBox.Text = "0";
             }
         }
 
-        private void ClearButton_Click(object sender, EventArgs e)
+        protected void NegateButton_Click(object sender, EventArgs e)
         {
-            currentInput = "0";
-            currentExpression = string.Empty;
-            operatorClicked = false;
-            equalsClicked = false;
-            decimalPointAdded = false;
-            
-            displayTextBox.Text = currentInput;
-            expressionLabel.Text = currentExpression;
-        }
-
-        private void BackspaceButton_Click(object sender, EventArgs e)
-        {
-            if (currentInput.Length > 0 && !operatorClicked && !equalsClicked && currentInput != "Error")
+            if (displayTextBox.Text != "0")
             {
-                // Check if we're deleting a decimal point
-                if (currentInput.EndsWith("."))
+                if (displayTextBox.Text.StartsWith("-"))
                 {
-                    decimalPointAdded = false;
+                    displayTextBox.Text = displayTextBox.Text.Substring(1);
                 }
-                
-                currentInput = currentInput.Substring(0, currentInput.Length - 1);
-                
-                // If all digits are deleted, display 0
-                if (string.IsNullOrEmpty(currentInput))
+                else
                 {
-                    currentInput = "0";
+                    displayTextBox.Text = "-" + displayTextBox.Text;
                 }
-                
-                displayTextBox.Text = currentInput;
             }
         }
 
-        private void CalculateExpression()
-        {
-            try
-            {
-                // Convert the expression to a proper format for DataTable.Compute
-                string expressionToEvaluate = currentExpression;
-                expressionToEvaluate = expressionToEvaluate.Replace("×", "*").Replace("÷", "/");
-                
-                // Evaluate using DataTable.Compute which handles MDAS precedence
-                DataTable dt = new DataTable();
-                var result = dt.Compute(expressionToEvaluate, "");
-                
-                // Convert result to string and handle formatting
-                currentInput = result.ToString();
-                
-                // If result ends with .0, remove the decimal part
-                if (currentInput.EndsWith(".0"))
-                {
-                    currentInput = currentInput.Substring(0, currentInput.Length - 2);
-                }
-                
-                // Check if the result has a decimal point
-                decimalPointAdded = currentInput.Contains(".");
-            }
-            catch (Exception)
-            {
-                currentInput = "Error";
-            }
-        }
-
-        private void MemoryButton_Click(object sender, EventArgs e)
+        protected void MemoryButton_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             
             switch (button.Text)
             {
                 case "MC": // Memory Clear
-                    memoryValue = string.Empty;
+                    memoryValue = 0;
                     break;
-                
                 case "MR": // Memory Recall
-                    if (!string.IsNullOrEmpty(memoryValue))
-                    {
-                        currentInput = memoryValue;
-                        displayTextBox.Text = currentInput;
-                        decimalPointAdded = memoryValue.Contains(".");
-                    }
+                    displayTextBox.Text = memoryValue.ToString();
+                    isNewCalculation = true;
                     break;
-                
                 case "M+": // Memory Add
-                    if (!string.IsNullOrEmpty(currentInput) && currentInput != "Error")
-                    {
-                        if (string.IsNullOrEmpty(memoryValue))
-                        {
-                            memoryValue = currentInput;
-                        }
-                        else
-                        {
-                            // Add current value to memory
-                            DataTable dt = new DataTable();
-                            var result = dt.Compute(memoryValue + "+" + currentInput, "");
-                            memoryValue = result.ToString();
-                            
-                            // If result ends with .0, remove the decimal part
-                            if (memoryValue.EndsWith(".0"))
-                            {
-                                memoryValue = memoryValue.Substring(0, memoryValue.Length - 2);
-                            }
-                        }
-                    }
+                    memoryValue += Convert.ToDouble(displayTextBox.Text);
+                    isNewCalculation = true;
                     break;
-                
                 case "M-": // Memory Subtract
-                    if (!string.IsNullOrEmpty(currentInput) && currentInput != "Error")
-                    {
-                        if (string.IsNullOrEmpty(memoryValue))
-                        {
-                            memoryValue = "-" + currentInput;
-                        }
-                        else
-                        {
-                            // Subtract current value from memory
-                            DataTable dt = new DataTable();
-                            var result = dt.Compute(memoryValue + "-" + currentInput, "");
-                            memoryValue = result.ToString();
-                            
-                            // If result ends with .0, remove the decimal part
-                            if (memoryValue.EndsWith(".0"))
-                            {
-                                memoryValue = memoryValue.Substring(0, memoryValue.Length - 2);
-                            }
-                        }
-                    }
+                    memoryValue -= Convert.ToDouble(displayTextBox.Text);
+                    isNewCalculation = true;
                     break;
-            }
-        }
-
-        private void NegateButton_Click(object sender, EventArgs e)
-        {
-            if (currentInput != "0" && currentInput != "Error")
-            {
-                if (currentInput.StartsWith("-"))
-                {
-                    currentInput = currentInput.Substring(1);
-                }
-                else
-                {
-                    currentInput = "-" + currentInput;
-                }
-                
-                displayTextBox.Text = currentInput;
             }
         }
     }
