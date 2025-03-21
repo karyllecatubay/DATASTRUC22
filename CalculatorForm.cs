@@ -3,15 +3,16 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace BasicCalculator
+namespace EnhancedCalculator
 {
     public partial class CalculatorForm : Form
     {
-        private string currentInput = string.Empty;
+        private string currentInput = "0";
         private string currentExpression = string.Empty;
         private bool operatorClicked = false;
         private bool equalsClicked = false;
         private bool decimalPointAdded = false;
+        private string memoryValue = string.Empty;
 
         public CalculatorForm()
         {
@@ -27,7 +28,7 @@ namespace BasicCalculator
             {
                 if (!decimalPointAdded)
                 {
-                    if (currentInput == string.Empty || operatorClicked || equalsClicked)
+                    if (currentInput == "0" || operatorClicked || equalsClicked)
                     {
                         currentInput = "0.";
                     }
@@ -40,31 +41,30 @@ namespace BasicCalculator
             }
             else // Handle number input
             {
-                if (operatorClicked || equalsClicked)
+                if (currentInput == "0" || operatorClicked || equalsClicked)
                 {
-                    currentInput = button.Text;
+                    // If the current input is 0 and the button pressed is not 0
+                    // replace the 0 with the new digit
+                    if (currentInput == "0" && button.Text == "0")
+                    {
+                        // Do nothing if trying to add more zeros at the beginning
+                        currentInput = "0";
+                    }
+                    else
+                    {
+                        currentInput = button.Text;
+                    }
                     operatorClicked = false;
                     equalsClicked = false;
                 }
                 else
                 {
-                    // Handle leading zeros
-                    if (currentInput == "0" && button.Text != "0")
-                    {
-                        currentInput = button.Text;
-                    }
-                    else if (currentInput == "0" && button.Text == "0")
-                    {
-                        // Do nothing if trying to add more zeros at the beginning
-                    }
-                    else
-                    {
-                        currentInput += button.Text;
-                    }
+                    currentInput += button.Text;
                 }
             }
             
             displayTextBox.Text = currentInput;
+            expressionLabel.Text = currentExpression;
         }
 
         private void OperatorButton_Click(object sender, EventArgs e)
@@ -79,7 +79,7 @@ namespace BasicCalculator
             }
             
             // Append current input and operator to the expression
-            if (!string.IsNullOrEmpty(currentInput))
+            if (!string.IsNullOrEmpty(currentInput) && currentInput != "Error")
             {
                 currentExpression += currentInput;
                 
@@ -92,21 +92,27 @@ namespace BasicCalculator
                 operatorClicked = true;
                 decimalPointAdded = false;
                 equalsClicked = false;
+                
+                expressionLabel.Text = currentExpression;
             }
         }
 
         private void EqualsButton_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(currentInput) && !operatorClicked)
+            if (!string.IsNullOrEmpty(currentInput) && !operatorClicked && currentInput != "Error")
             {
+                // Add current input to expression
                 currentExpression += currentInput;
+                expressionLabel.Text = currentExpression + "=";
+                
+                // Calculate the result
                 CalculateExpression();
                 displayTextBox.Text = currentInput;
                 
                 // Reset for next calculation
                 currentExpression = string.Empty;
                 equalsClicked = true;
-                decimalPointAdded = false;
+                decimalPointAdded = currentInput.Contains(".");
             }
         }
 
@@ -119,11 +125,12 @@ namespace BasicCalculator
             decimalPointAdded = false;
             
             displayTextBox.Text = currentInput;
+            expressionLabel.Text = currentExpression;
         }
 
         private void BackspaceButton_Click(object sender, EventArgs e)
         {
-            if (currentInput.Length > 0 && !operatorClicked && !equalsClicked)
+            if (currentInput.Length > 0 && !operatorClicked && !equalsClicked && currentInput != "Error")
             {
                 // Check if we're deleting a decimal point
                 if (currentInput.EndsWith("."))
@@ -148,7 +155,7 @@ namespace BasicCalculator
             try
             {
                 // Convert the expression to a proper format for DataTable.Compute
-                string expressionToEvaluate = currentExpression + currentInput;
+                string expressionToEvaluate = currentExpression;
                 expressionToEvaluate = expressionToEvaluate.Replace("×", "*").Replace("÷", "/");
                 
                 // Evaluate using DataTable.Compute which handles MDAS precedence
@@ -170,6 +177,90 @@ namespace BasicCalculator
             catch (Exception)
             {
                 currentInput = "Error";
+            }
+        }
+
+        private void MemoryButton_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            
+            switch (button.Text)
+            {
+                case "MC": // Memory Clear
+                    memoryValue = string.Empty;
+                    break;
+                
+                case "MR": // Memory Recall
+                    if (!string.IsNullOrEmpty(memoryValue))
+                    {
+                        currentInput = memoryValue;
+                        displayTextBox.Text = currentInput;
+                        decimalPointAdded = memoryValue.Contains(".");
+                    }
+                    break;
+                
+                case "M+": // Memory Add
+                    if (!string.IsNullOrEmpty(currentInput) && currentInput != "Error")
+                    {
+                        if (string.IsNullOrEmpty(memoryValue))
+                        {
+                            memoryValue = currentInput;
+                        }
+                        else
+                        {
+                            // Add current value to memory
+                            DataTable dt = new DataTable();
+                            var result = dt.Compute(memoryValue + "+" + currentInput, "");
+                            memoryValue = result.ToString();
+                            
+                            // If result ends with .0, remove the decimal part
+                            if (memoryValue.EndsWith(".0"))
+                            {
+                                memoryValue = memoryValue.Substring(0, memoryValue.Length - 2);
+                            }
+                        }
+                    }
+                    break;
+                
+                case "M-": // Memory Subtract
+                    if (!string.IsNullOrEmpty(currentInput) && currentInput != "Error")
+                    {
+                        if (string.IsNullOrEmpty(memoryValue))
+                        {
+                            memoryValue = "-" + currentInput;
+                        }
+                        else
+                        {
+                            // Subtract current value from memory
+                            DataTable dt = new DataTable();
+                            var result = dt.Compute(memoryValue + "-" + currentInput, "");
+                            memoryValue = result.ToString();
+                            
+                            // If result ends with .0, remove the decimal part
+                            if (memoryValue.EndsWith(".0"))
+                            {
+                                memoryValue = memoryValue.Substring(0, memoryValue.Length - 2);
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void NegateButton_Click(object sender, EventArgs e)
+        {
+            if (currentInput != "0" && currentInput != "Error")
+            {
+                if (currentInput.StartsWith("-"))
+                {
+                    currentInput = currentInput.Substring(1);
+                }
+                else
+                {
+                    currentInput = "-" + currentInput;
+                }
+                
+                displayTextBox.Text = currentInput;
             }
         }
     }
