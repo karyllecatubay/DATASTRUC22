@@ -262,8 +262,6 @@ namespace EnhancedCalculator
             this.OneButton.Click += new System.EventHandler(this.NumberButton_Click);
             
             // 2 Button
-            this.TwoButton.Location
-            // 2 Button
             this.TwoButton.Location = new System.Drawing.Point(xStart + (buttonWidth + xPadding), yStart + 3 * (buttonHeight + yPadding));
             this.TwoButton.Size = new System.Drawing.Size(buttonWidth, buttonHeight);
             this.TwoButton.Text = "2";
