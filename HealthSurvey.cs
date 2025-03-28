@@ -23,6 +23,26 @@ namespace HealthSurveyApp
                 return;
             }
 
+            // Validate birthdate
+            if (dtpBirthdate.Value > DateTime.Today)
+            {
+                MessageBox.Show("Please select a valid birthdate.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Validate BMI fields
+            if (string.IsNullOrWhiteSpace(txtCurrentBMI.Text) || !double.TryParse(txtCurrentBMI.Text, out _))
+            {
+                MessageBox.Show("Please enter a valid BMI value for Current BMI.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtTargetBMI.Text) || !double.TryParse(txtTargetBMI.Text, out _))
+            {
+                MessageBox.Show("Please enter a valid BMI value for Target BMI.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             // Generate summary of submitted data
             StringBuilder summary = new StringBuilder();
             summary.AppendLine("Health Survey Submission Summary");
@@ -63,7 +83,7 @@ namespace HealthSurveyApp
             summary.AppendLine($"\nBedtime: {txtBedtime.Text}");
             summary.AppendLine($"Wake-up Time: {txtWakeUpTime.Text}");
             summary.AppendLine($"Sleep Hours: {txtSleepHours.Text}");
-            summary.AppendLine($"Feeling Rested: {(rbRested.Checked ? "Yes" : "No")}");
+            summary.AppendLine($"Feeling Rested: {(rbRestedYes.Checked ? "Yes" : "No")}");
             summary.AppendLine($"Sleep Quality: {txtSleepQuality.Text}");
 
             // Stress Information
