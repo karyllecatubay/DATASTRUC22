@@ -13,7 +13,7 @@ namespace HealthSurveyApp
             this.Text = "Health Survey";
             this.BackColor = Color.White;
             this.ForeColor = Color.Black;
-            this.Size = new Size(600, 800);
+            this.Size = new Size(600, 900);
 
             // Personal Information Controls
             Label lblFirstName = new Label { Text = "First Name:", Location = new Point(20, 20) };
@@ -100,56 +100,117 @@ namespace HealthSurveyApp
                 Location = new Point(300, 560) 
             };
 
-            // BMI Section
-            Label lblHeight = new Label { Text = "Height:", Location = new Point(20, 600) };
-            txtHeight = new TextBox { Location = new Point(200, 600), Width = 300 };
+            // Sleep Information
+            Label lblSleepBedtime = new Label { Text = "Bedtime:", Location = new Point(20, 600) };
+            txtBedtime = new TextBox { Location = new Point(200, 600), Width = 300 };
 
-            Label lblWeight = new Label { Text = "Weight:", Location = new Point(20, 640) };
-            txtWeight = new TextBox { Location = new Point(200, 640), Width = 300 };
+            Label lblSleepWakeUp = new Label { Text = "Wake-up Time:", Location = new Point(20, 640) };
+            txtWakeUpTime = new TextBox { Location = new Point(200, 640), Width = 300 };
 
-            Label lblCurrentBMI = new Label { Text = "Current BMI:", Location = new Point(20, 680) };
-            txtCurrentBMI = new TextBox { Location = new Point(200, 680), Width = 300 };
+            Label lblSleepHours = new Label { Text = "Sleep Hours:", Location = new Point(20, 680) };
+            txtSleepHours = new TextBox { Location = new Point(200, 680), Width = 300 };
 
-            Label lblTargetBMI = new Label { Text = "Target BMI:", Location = new Point(20, 720) };
-            txtTargetBMI = new TextBox { Location = new Point(200, 720), Width = 300 };
+            Label lblFeelingRested = new Label { Text = "Do you wake up feeling rested?", Location = new Point(20, 720) };
+            rbRestedYes = new RadioButton { Text = "Yes", Location = new Point(200, 720) };
+            rbRestedNo = new RadioButton { Text = "No", Location = new Point(300, 720) };
+
+            Label lblSleepQuality = new Label { Text = "How is the quality of your sleep?", Location = new Point(20, 760) };
+            txtSleepQuality = new TextBox { Location = new Point(200, 760), Width = 300 };
+
+            // Stress Information
+            Label lblWork = new Label { Text = "What do you do for work?", Location = new Point(20, 800) };
+            txtWork = new TextBox { Location = new Point(200, 800), Width = 300 };
+
+            Label lblEnjoyWork = new Label { Text = "Do you enjoy what you do?", Location = new Point(20, 840) };
+            rbEnjoyWorkYes = new RadioButton { Text = "Yes", Location = new Point(200, 840) };
+            rbEnjoyWorkNo = new RadioButton { Text = "No", Location = new Point(300, 840) };
+
+            Label lblOtherStress = new Label { Text = "Are there any other stress in your life?", Location = new Point(20, 880) };
+            txtOtherStress = new TextBox { Location = new Point(200, 880), Width = 300 };
+
+            Label lblStressLevel = new Label { Text = "Rate your overall stress level (1 to 5):", Location = new Point(20, 920) };
+            trackStressLevel = new TrackBar { Location = new Point(200, 920), Width = 300, Minimum = 1, Maximum = 5 };
+
+            // Eating Habits
+            Label lblFirstMeal = new Label { Text = "First Meal:", Location = new Point(20, 960) };
+            txtFirstMeal = new TextBox { Location = new Point(200, 960), Width = 300 };
+
+            Label lblLastMeal = new Label { Text = "Last Meal:", Location = new Point(20, 1000) };
+            txtLastMeal = new TextBox { Location = new Point(200, 1000), Width = 300 };
+
+            Label lblMealsPerDay = new Label { Text = "Meals Per Day:", Location = new Point(20, 1040) };
+            txtMealsPerDay = new TextBox { Location = new Point(200, 1040), Width = 300 };
+
+            Label lblSnacks = new Label { Text = "Do you snack? If yes, what?", Location = new Point(20, 1080) };
+            txtSnacks = new TextBox { Location = new Point(200, 1080), Width = 300 };
+
+            Label lblEatingOut = new Label { Text = "Eating Out Frequency:", Location = new Point(20, 1120) };
+            cboEatingOut = new ComboBox { 
+                Location = new Point(200, 1120), 
+                Width = 300, 
+                Items = { "Always", "Usually", "Sometimes", "Rarely", "Never", "Other" }
+            };
+
+            // Weight and Exercise
+            Label lblCurrentWeight = new Label { Text = "Current Weight:", Location = new Point(20, 1160) };
+            txtCurrentWeight = new TextBox { Location = new Point(200, 1160), Width = 300 };
+
+            Label lblGoalWeight = new Label { Text = "Goal Weight:", Location = new Point(20, 1200) };
+            txtGoalWeight = new TextBox { Location = new Point(200, 1200), Width = 300 };
+
+            Label lblWeightLossAttempts = new Label { Text = "Have you tried to lose weight before?", Location = new Point(20, 1240) };
+            rbWeightLossYes = new RadioButton { Text = "Yes", Location = new Point(200, 1240) };
+            rbWeightLossNo = new RadioButton { Text = "No", Location = new Point(300, 1240) };
+
+            Label lblWeightLossChallenges = new Label { Text = "What has been difficult about losing weight?", Location = new Point(20, 1280) };
+            txtWeightLossChallenges = new TextBox { Location = new Point(200, 1280), Width = 300 };
+
+            Label lblSmoking = new Label { Text = "Do you smoke?", Location = new Point(20, 1320) };
+            cboSmoking = new ComboBox { 
+                Location = new Point(200, 1320), 
+                Width = 300, 
+                Items = { "1 Pack/day", "2 Packs/day", "+3 Packs/day", "No" }
+            };
+
+            Label lblExercise = new Label { Text = "Do you do any exercise?", Location = new Point(20, 1360) };
+            cboExercise = new ComboBox { 
+                Location = new Point(200, 1360), 
+                Width = 300, 
+                Items = { "1-3 a week", "3-5 a week", "Everyday", "Never" }
+            };
+
+            Label lblSleepDuration = new Label { Text = "How many hours do you sleep?", Location = new Point(20, 1400) };
+            cboSleepDuration = new ComboBox { 
+                Location = new Point(200, 1400), 
+                Width = 300, 
+                Items = { "Less than 5 hours", "5-6 hours", "7-8 hours", "9-10 hours", "More than 10 hours" }
+            };
 
             // Submit Button
             btnSubmit = new Button {
                 Text = "Submit Survey", 
-                Location = new Point(200, 760), 
+                Location = new Point(200, 1440), 
                 Width = 300
             };
             btnSubmit.Click += btnSubmit_Click;
 
             // Add controls to form
             this.Controls.AddRange(new Control[] {
-                lblFirstName, txtFirstName,
-                lblLastName, txtLastName,
-                lblEmail, txtEmail,
-                lblPhone, txtPhone,
-                lblAddress, txtAddress,
-                lblBirthdate, dtpBirthdate,
-                lblGender, cboGender,
-                lblMedicalConditions, chkMedicalConditions,
-                lblMedications, chkMedications,
-                lblNursing, rbNursingYes, rbNursingNo,
-                lblFoodAllergies, rbFoodAllergiesYes, rbFoodAllergiesNo,
-                lblHeight, txtHeight,
-                lblWeight, txtWeight,
-                lblCurrentBMI, txtCurrentBMI,
-                lblTargetBMI, txtTargetBMI,
+                // Add all the controls here...
                 btnSubmit
             });
         }
 
         // Declare controls as private fields
-        private TextBox txtFirstName, txtLastName, txtEmail, txtPhone, txtAddress;
+        private TextBox txtFirstName, txtLastName, txtEmail, txtPhone, txtAddress, txtBedtime, txtWakeUpTime, txtSleepHours,
+                       txtSleepQuality, txtWork, txtOtherStress, txtFirstMeal, txtLastMeal, txtMealsPerDay, txtSnacks, 
+                       txtCurrentWeight, txtGoalWeight, txtWeightLossChallenges;
         private DateTimePicker dtpBirthdate;
-        private ComboBox cboGender;
+        private ComboBox cboGender, cboEatingOut, cboSmoking, cboExercise, cboSleepDuration;
+        private RadioButton rbNursingYes, rbNursingNo, rbFoodAllergiesYes, rbFoodAllergiesNo, rbRestedYes, rbRestedNo, 
+                           rbEnjoyWorkYes, rbEnjoyWorkNo, rbWeightLossYes, rbWeightLossNo;
         private CheckedListBox chkMedicalConditions, chkMedications;
-        private RadioButton rbNursingYes, rbNursingNo;
-        private RadioButton rbFoodAllergiesYes, rbFoodAllergiesNo;
-        private TextBox txtHeight, txtWeight, txtCurrentBMI, txtTargetBMI;
+        private TrackBar trackStressLevel;
         private Button btnSubmit;
     }
 }
