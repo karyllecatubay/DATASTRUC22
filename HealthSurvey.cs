@@ -1,60 +1,103 @@
+// HealthSurveyForm.cs
 using System;
 using System.Windows.Forms;
+using System.Text;
 
 namespace HealthSurveyApp
 {
-    static class Program
-    {
-        [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new HealthSurveyForm());
-        }
-    }
-
     public partial class HealthSurveyForm : Form
     {
-        private void BtnSubmit_Click(object sender, EventArgs e)
+        public HealthSurveyForm()
+        {
+            InitializeComponent();
+        }
+
+        private void btnSubmit_Click(object sender, EventArgs e)
         {
             // Validate required fields
             if (string.IsNullOrWhiteSpace(txtFirstName.Text) || 
                 string.IsNullOrWhiteSpace(txtLastName.Text) || 
                 string.IsNullOrWhiteSpace(txtEmail.Text))
             {
-                MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please fill in required fields (Name, Email).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // Create summary
-            string summary = "Health Survey Summary:\n\n" +
-                $"Name: {txtFirstName.Text} {txtLastName.Text}\n" +
-                $"Email: {txtEmail.Text}\n" +
-                $"Phone: {txtPhoneNumber.Text}\n" +
-                $"Age: {lblAge.Text.Replace("Age: ", "")}\n" +
-                $"Gender: {cmbGender.SelectedItem}\n\n" +
-                $"Pregnancy Status: {(rdoPregnancyYes.Checked ? "Yes" : rdoPregnancyNo.Checked ? "No" : "N/A")}\n" +
-                $"Food Allergies: {(rdoAllergiesYes.Checked ? "Yes" : "No")}\n" +
-                $"Sleep Hours: {cmbSleepHours.SelectedItem}\n" +
-                $"Water Intake: {cmbWaterIntake.SelectedItem}\n" +
-                $"Exercise Frequency: {cmbExerciseFrequency.SelectedItem}\n" +
-                $"Smoking Status: {(rdoSmokingYes.Checked ? "Yes" : "No")}";
+            // Generate summary of submitted data
+            StringBuilder summary = new StringBuilder();
+            summary.AppendLine("Health Survey Submission Summary");
+            summary.AppendLine("-----------------------------");
+            
+            // Personal Information
+            summary.AppendLine($"Name: {txtFirstName.Text} {txtLastName.Text}");
+            summary.AppendLine($"Email: {txtEmail.Text}");
+            summary.AppendLine($"Phone: {txtPhone.Text}");
+            summary.AppendLine($"Address: {txtAddress.Text}");
+            summary.AppendLine($"Birthdate: {dtpBirthdate.Value.ToShortDateString()}");
+            summary.AppendLine($"Age: {CalculateAge(dtpBirthdate.Value)}");
+            summary.AppendLine($"Gender: {cboGender.SelectedItem}");
 
-            rtbSummary.Text = summary;
+            // Medical Information
+            summary.AppendLine("\nMedical Conditions:");
+            foreach (var item in chkMedicalConditions.CheckedItems)
+            {
+                summary.AppendLine($"- {item}");
+            }
+
+            summary.AppendLine("\nMedications:");
+            foreach (var item in chkMedications.CheckedItems)
+            {
+                summary.AppendLine($"- {item}");
+            }
+
+            summary.AppendLine($"\nNursing: {(rbNursingYes.Checked ? "Yes" : "No")}");
+            summary.AppendLine($"Food Allergies: {(rbFoodAllergiesYes.Checked ? "Yes" : "No")}");
+
+            // BMI Information
+            summary.AppendLine($"\nHeight: {txtHeight.Text}");
+            summary.AppendLine($"Weight: {txtWeight.Text}");
+            summary.AppendLine($"Current BMI: {txtCurrentBMI.Text}");
+            summary.AppendLine($"Target BMI: {txtTargetBMI.Text}");
+
+            // Sleep Information
+            summary.AppendLine($"\nBedtime: {txtBedtime.Text}");
+            summary.AppendLine($"Wake-up Time: {txtWakeUpTime.Text}");
+            summary.AppendLine($"Sleep Hours: {txtSleepHours.Text}");
+            summary.AppendLine($"Feeling Rested: {(rbRested.Checked ? "Yes" : "No")}");
+            summary.AppendLine($"Sleep Quality: {txtSleepQuality.Text}");
+
+            // Stress Information
+            summary.AppendLine($"\nWork: {txtWork.Text}");
+            summary.AppendLine($"Enjoys Work: {(rbEnjoyWorkYes.Checked ? "Yes" : "No")}");
+            summary.AppendLine($"Other Stress: {txtOtherStress.Text}");
+            summary.AppendLine($"Stress Level: {trackStressLevel.Value}");
+
+            // Eating Habits
+            summary.AppendLine($"\nFirst Meal: {txtFirstMeal.Text}");
+            summary.AppendLine($"Last Meal: {txtLastMeal.Text}");
+            summary.AppendLine($"Meals Per Day: {txtMealsPerDay.Text}");
+            summary.AppendLine($"Snacking: {txtSnacks.Text}");
+            summary.AppendLine($"Eating Out Frequency: {cboEatingOut.SelectedItem}");
+
+            // Weight and Exercise
+            summary.AppendLine($"\nCurrent Weight: {txtCurrentWeight.Text}");
+            summary.AppendLine($"Goal Weight: {txtGoalWeight.Text}");
+            summary.AppendLine($"Previous Weight Loss Attempts: {(rbWeightLossYes.Checked ? "Yes" : "No")}");
+            summary.AppendLine($"Weight Loss Challenges: {txtWeightLossChallenges.Text}");
+            summary.AppendLine($"Smoking: {cboSmoking.SelectedItem}");
+            summary.AppendLine($"Exercise Frequency: {cboExercise.SelectedItem}");
+            summary.AppendLine($"Sleep Duration: {cboSleepDuration.SelectedItem}");
+
+            // Display summary
+            MessageBox.Show(summary.ToString(), "Survey Submission Summary", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void DtpBirthdate_ValueChanged(object sender, EventArgs e)
+        private int CalculateAge(DateTime birthdate)
         {
-            int age = DateTime.Today.Year - dtpBirthdate.Value.Year;
-            if (DateTime.Today < dtpBirthdate.Value.AddYears(age)) age--;
-            lblAge.Text = $"Age: {age}";
-        }
-
-        // Constructor
-        public HealthSurveyForm()
-        {
-            InitializeComponent();
+            var today = DateTime.Today;
+            var age = today.Year - birthdate.Year;
+            if (birthdate.Date > today.AddYears(-age)) age--;
+            return age;
         }
     }
 }
