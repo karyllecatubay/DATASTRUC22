@@ -1,0 +1,77 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Linq;
+
+class Student
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public List<Course> Courses { get; set; } = new List<Course>();
+    public DateTime EnrollmentDate { get; set; }
+
+    public double CalculateGPA() => Courses.Count == 0 ? 0 :
+        Courses.Average(c => c.Grade switch { "A" => 4.0, "B" => 3.0, "C" => 2.0, "D" => 1.0, _ => 0.0 });
+
+    public override string ToString() =>
+        $"ID: {Id}, Name: {Name}, Age: {Age}, GPA: {CalculateGPA():F2}";
+}
+
+class Course
+{
+    public string Name { get; set; }
+    public string Grade { get; set; }
+}
+
+class Program
+{
+    static string filePath = Path.Combine("SEMIFINAL", "students.bin");
+
+    static void Main()
+    {
+        Directory.CreateDirectory("SEMIFINAL");
+
+        List<Student> students = LoadStudents();
+
+        Console.Write("Enter student name: ");
+        string name = Console.ReadLine() ?? "Unnamed";
+
+        Console.Write("Enter age: ");
+        int.TryParse(Console.ReadLine(), out int age);
+
+        Student newStudent = new() { Id = students.Count + 1, Name = name, Age = age, EnrollmentDate = DateTime.Now };
+
+        Console.Write("Enter course name (or press Enter to skip): ");
+        string courseName = Console.ReadLine();
+        if (!string.IsNullOrWhiteSpace(courseName))
+        {
+            Console.Write("Enter grade (A-F): ");
+            newStudent.Courses.Add(new Course { Name = courseName, Grade = Console.ReadLine()?.ToUpper() ?? "N/A" });
+        }
+
+        students.Add(newStudent);
+        SaveStudents(students);
+
+        Console.WriteLine("\nStudents List:");
+        students.ForEach(Console.WriteLine);
+
+        var topStudent = students.OrderByDescending(s => s.CalculateGPA()).FirstOrDefault();
+        if (topStudent != null) Console.WriteLine($"\nTop Student: {topStudent.Name}, GPA: {topStudent.CalculateGPA():F2}");
+    }
+
+    static List<Student> LoadStudents()
+    {
+        if (!File.Exists(filePath)) return new List<Student>();
+
+        using var fs = File.OpenRead(filePath);
+        return JsonSerializer.Deserialize<List<Student>>(fs) ?? new List<Student>();
+    }
+
+    static void SaveStudents(List<Student> students)
+    {
+        using var fs = File.Create(filePath);
+        JsonSerializer.Serialize(fs, students);
+    }
+}
