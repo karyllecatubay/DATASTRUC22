@@ -1,0 +1,16 @@
+create a windows form application that collects stuident info and save it in a text file named student_record.txt
+
+student information to collect
+
+ID No: (must apply only numbers)
+First Name: (no special characters)
+LastName: (no special characters)
+Middle Name  (no special characters)
+Course  (no special characters)
+Year Level (numbers only)
+Birthday(year/month/day)
+
+
+create .cs and designer.cs
+
+after entering the inputs in textbox, save the inputs to the student_record.txt
