@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace StudentRecordApp
+namespace Catubay_SemifinalActivity2
 {
     static class Program
     {
@@ -13,7 +13,7 @@ namespace StudentRecordApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Catubay_SemifinalActivity1());
+            Application.Run(new Catubay_SemifinalActivity2());
         }
     }
 }
